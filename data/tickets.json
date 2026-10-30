@@ -1,0 +1,56 @@
+[
+  {
+    "id": 1041,
+    "title": "Laptop won't boot",
+    "priority": 1,
+    "status": "open",
+    "hours_open": 5.0,
+    "assigned_to": "Priya",
+    "service": "Hardware"
+  },
+  {
+    "id": 1042,
+    "title": "VPN not connecting",
+    "priority": 2,
+    "status": "open",
+    "hours_open": 5.5,
+    "assigned_to": null,
+    "service": "Network"
+  },
+  {
+    "id": 1043,
+    "title": "Password reset",
+    "priority": 3,
+    "status": "resolved",
+    "hours_open": 1.0,
+    "assigned_to": "Sam",
+    "service": "Accounts"
+  },
+  {
+    "id": 1044,
+    "title": "Wi-Fi drops in office",
+    "priority": 2,
+    "status": "open",
+    "hours_open": 12.0,
+    "assigned_to": "Priya",
+    "service": "Network"
+  },
+  {
+    "id": 1045,
+    "title": "New starter account",
+    "priority": 4,
+    "status": "open",
+    "hours_open": 30.0,
+    "assigned_to": null,
+    "service": "Accounts"
+  },
+  {
+    "id": 1046,
+    "title": "Printer jam",
+    "priority": 3,
+    "status": "open",
+    "hours_open": 26.0,
+    "assigned_to": "Sam",
+    "service": "Hardware"
+  }
+]

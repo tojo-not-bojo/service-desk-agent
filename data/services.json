@@ -1,0 +1,17 @@
+{
+  "Network": {
+    "owner_team": "Infrastructure",
+    "support_hours": "24/7",
+    "description": "VPN, Wi-Fi and office connectivity"
+  },
+  "Hardware": {
+    "owner_team": "End User Computing",
+    "support_hours": "Mon-Fri 08:00-18:00",
+    "description": "Laptops, printers and peripherals"
+  },
+  "Accounts": {
+    "owner_team": "Identity & Access",
+    "support_hours": "Mon-Fri 08:00-18:00",
+    "description": "Logins, passwords and new starter accounts"
+  }
+}

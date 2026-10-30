@@ -1,0 +1,66 @@
+{
+  "ticket_id": 1044,
+  "title": "Wi-Fi drops in office",
+  "status": "monitoring",
+  "requester": {
+    "name": "Jordan Lee",
+    "email": "jordan.lee@example.com",
+    "department": "Finance",
+    "location": {
+      "site": "Leeds",
+      "floor": 3
+    }
+  },
+  "tags": [
+    "wifi",
+    "intermittent",
+    "office"
+  ],
+  "updates": [
+    {
+      "timestamp": "2026-10-28T09:15:00",
+      "author": "Jordan Lee",
+      "note": "Wi-Fi keeps dropping every 10 minutes on floor 3."
+    },
+    {
+      "timestamp": "2026-10-28T11:40:00",
+      "author": "Priya",
+      "note": "Access point AP-3B is restarting repeatedly."
+    },
+    {
+      "timestamp": "2026-10-28T16:05:00",
+      "author": "Priya",
+      "note": "Firmware update scheduled for tomorrow morning."
+    },
+    {
+      "timestamp": "2026-10-29T08:30:00",
+      "author": "Priya",
+      "note": "Firmware updated on AP-3B. Monitoring."
+    },
+    {
+      "timestamp": "2026-10-29T08:30:00",
+      "author": "Priya",
+      "note": "Firmware updated on AP-3B. Monitoring."
+    },
+    {
+      "timestamp": "2026-10-29T08:30:00",
+      "author": "Priya",
+      "note": "Firmware updated on AP-3B. Monitoring."
+    },
+    {
+      "timestamp": "2026-10-29T08:30:00",
+      "author": "Priya",
+      "note": "Firmware updated on AP-3B. Monitoring."
+    },
+    {
+      "timestamp": "2026-10-29T08:30:00",
+      "author": "Priya",
+      "note": "Firmware updated on AP-3B. Monitoring."
+    }
+  ],
+  "sla": {
+    "priority": 2,
+    "target_hours": 8,
+    "breached": true
+  }
+}
