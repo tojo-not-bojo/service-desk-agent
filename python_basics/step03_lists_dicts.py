@@ -97,13 +97,29 @@ print(SLA_HOURS[2])           # 8
 print(SLA_HOURS.get(5, 72))   # 72
 for priority, hours in SLA_HOURS.items():
     print(f"P{priority}: {hours}h")
-    
+
 '''
 Table basics.
 Print how many tickets there are, the title of the first ticket and the ID of the last.
 Get the IDs of all open tickets twice: once with a for loop and .append(), once with a list comprehension.
 With a list comprehension, get the IDs of tickets that are open and unassigned.
 '''
+
+print(len(tickets))           # 6
+print(tickets[0]["title"])    # Laptop won't boot
+print(tickets[-1]["id"])      # 1046
+
+open_ids = []
+for t in tickets:
+    if t["status"] == "open":
+        open_ids.append(t["id"])
+print(open_ids)               # [1041, 1042, 1044, 1045, 1046]
+
+open_ids = [t["id"] for t in tickets if t["status"] == "open"]
+print(open_ids)               # same result
+
+unassigned = [t["id"] for t in tickets if t["status"] == "open" and t["assigned_to"] is None]
+print(unassigned)             # [1042, 1045]
 
 '''
 Breach flag.
@@ -112,13 +128,41 @@ For each open ticket, print a line like 1041: P1, 5.0h of 4h -> BREACHED.
 Then print the list of breached IDs.
 '''
 
+for t in tickets:
+    sla = SLA_HOURS[t["priority"]]
+    t["breached"] = t["status"] == "open" and t["hours_open"] > sla
+    if t["status"] == "open":
+        result = "BREACHED" if t["breached"] else "OK"
+        print(f"{t['id']}: P{t['priority']}, {t['hours_open']}h of {sla}h -> {result}")
+
+breached_ids = [t["id"] for t in tickets if t["breached"]]
+print(f"Breached: {breached_ids}")
+
 '''
 GROUP BY. For open tickets only, print the number of tickets and the total hours per service, like Hardware: 2 open, 31.0h total.
 '''
 
+summary = {}
+for t in tickets:
+    if t["status"] != "open":
+        continue                          # skip this row, like a WHERE filter
+    s = t["service"]
+    if s not in summary:
+        summary[s] = {"count": 0, "hours": 0.0}
+    summary[s]["count"] += 1
+    summary[s]["hours"] += t["hours_open"]
+
+for service, stats in summary.items():
+    print(f"{service}: {stats['count']} open, {stats['hours']:.1f}h total")
+
 '''
 ORDER BY / TOP. Print the 3 open tickets that have been open longest, longest first, like 1045: New starter account (30.0h).
 '''
+
+open_tickets = [t for t in tickets if t["status"] == "open"]
+longest = sorted(open_tickets, key=lambda t: t["hours_open"], reverse=True)
+for t in longest[:3]:
+    print(f"{t['id']}: {t['title']} ({t['hours_open']}h)")
 
 '''
 Primary-key lookup.
@@ -126,3 +170,12 @@ Build tickets_by_id, a dict mapping each ID to its ticket. A dict comprehension 
 Look up 1043 and print Ticket 1043: Password reset (resolved).
 Look up 9999 and print Ticket 9999 not found, without crashing.
 '''
+
+tickets_by_id = {t["id"]: t for t in tickets}
+
+for ticket_id in [1043, 9999]:
+    t = tickets_by_id.get(ticket_id)
+    if t is None:
+        print(f"Ticket {ticket_id} not found")
+    else:
+        print(f"Ticket {ticket_id}: {t['title']} ({t['status']})")

@@ -169,3 +169,43 @@ On success: return the region, the holiday’s title and date, and the source.
 On failure: return error dicts for unavailable data, an unknown region (list the valid ones) and no upcoming holidays.
 Test with no argument, "Scotland" and "wales".
 '''
+
+def get_next_bank_holiday(region: str = "england-and-wales") -> dict:
+    """Find the next UK bank holiday for a region.
+
+    Args:
+        region: One of "england-and-wales", "scotland" or "northern-ireland".
+
+    Returns:
+        On success, a dict with "status": "success" plus the region, the
+        holiday's title and date (YYYY-MM-DD), and "source": "api" or "cache"
+        to show whether the data is live or a saved copy. On failure, a dict
+        with "status": "error" and an error_message.
+    """
+    try:
+        data, source = load_bank_holidays()
+    except RuntimeError as e:
+        return {"status": "error", "error_message": f"Bank holiday data is unavailable: {e}"}
+
+    region = region.strip().lower()
+    if region not in data:
+        valid = ", ".join(data)
+        return {"status": "error", "error_message": f"Unknown region '{region}'. Valid regions: {valid}."}
+
+    today = date.today().isoformat()
+    upcoming = [e for e in data[region]["events"] if e["date"] >= today]
+    if not upcoming:
+        return {"status": "error", "error_message": f"No upcoming bank holidays are listed for {region}."}
+
+    next_holiday = min(upcoming, key=lambda e: e["date"])
+    return {
+        "status": "success",
+        "region": region,
+        "title": next_holiday["title"],
+        "date": next_holiday["date"],
+        "source": source,
+    }
+
+
+for region in ["england-and-wales", "Scotland", "wales"]:
+    print(get_next_bank_holiday(region))

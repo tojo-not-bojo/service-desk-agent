@@ -1,3 +1,40 @@
+# Variables and types
+
+ticket_id = 1042             # int    ≈ INT
+title = "VPN not connecting" # str    ≈ VARCHAR
+hours_open = 5.5             # float  ≈ DECIMAL / FLOAT
+is_resolved = False          # bool   ≈ BIT (True/False, capitalised)
+assigned_to = None           # None   ≈ NULL
+
+print(type(hours_open))      # <class 'float'>
+
+#f string
+
+print(f"Ticket {ticket_id} is open: {not is_resolved}")
+print(f"Open for {hours_open:.1f} hours")   # :.1f means 1 decimal place
+
+# if elif else
+
+if priority == 1:            # == compares; = assigns
+    sla_hours = 4
+elif priority == 2:
+    sla_hours = 8
+else:
+    sla_hours = 24
+
+#loops
+
+for hours in [2, 9.5, 30]:   # runs once per item in the list
+    print(hours)
+
+for i in range(1, 4):        # 1, 2, 3 (the end number is excluded)
+    print(f"Check {i}")
+
+count = 0
+while count < 3:             # repeats while the condition is True
+    count += 1               # shorthand for count = count + 1
+
+
 '''
 
 1. Ticket summary. Create variables for one ticket:
@@ -109,3 +146,4 @@ else:
     sla_hours = 72
 
 print(f"SLA hours for P{priority}: {sla_hours}")
+

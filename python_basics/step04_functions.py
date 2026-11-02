@@ -30,7 +30,7 @@ def get_sla_hours(priority: int) -> int:
     """
     return SLA_HOURS.get(priority, 72)
 
-print(get_sla_hours(5))
+print(get_sla_hours(5))  # 72
 
 '''
 is_breached(ticket: dict) -> bool returns True if the ticket is open and over its SLA. Use get_sla_hours inside it.
@@ -39,9 +39,22 @@ def is_breached(ticket: dict) -> bool:
     """Return True if the ticket is open and has been open longer than its SLA."""
     return ticket["status"] == "open" and ticket["hours_open"] > get_sla_hours(ticket["priority"])
 
+print(is_breached(tickets[1]))  # True
+
 '''
 format_ticket(ticket: dict, show_assignee: bool = False) -> str returns a line like 1042: VPN not connecting | P2 | open. When show_assignee=True, it adds | Unassigned or | Priya to the end. It must return the string, not print it.
 '''
+
+def format_ticket(ticket: dict, show_assignee: bool = False) -> str:
+    """Return a one-line summary of a ticket, optionally including who it's assigned to."""
+    line = f"{ticket['id']}: {ticket['title']} | P{ticket['priority']} | {ticket['status']}"
+    if show_assignee:
+        assignee = ticket["assigned_to"] or "Unassigned"
+        line += f" | {assignee}"
+    return line
+
+print(format_ticket(tickets[1]))
+print(format_ticket(tickets[1], show_assignee=True))
 
 '''
 get_ticket_status(ticket_id: int) -> dict is a tool-style function.
@@ -51,6 +64,36 @@ Write a full Args/Returns docstring.
 Test it with 1044 and 9999.
 '''
 
+TICKETS_BY_ID = {t["id"]: t for t in tickets}
+
+def get_ticket_status(ticket_id: int) -> dict:
+    """Look up a service desk ticket and report its current status.
+
+    Args:
+        ticket_id: The numeric ticket ID, for example 1042.
+
+    Returns:
+        On success, a dict with "status": "success" plus the ticket's title,
+        ticket_status, priority, assigned_to and sla_breached. If no ticket
+        has that ID, a dict with "status": "error" and an error_message.
+    """
+    ticket = TICKETS_BY_ID.get(ticket_id)
+    if ticket is None:
+        return {"status": "error", "error_message": f"Ticket {ticket_id} not found."}
+
+    return {
+        "status": "success",
+        "ticket_id": ticket_id,
+        "title": ticket["title"],
+        "ticket_status": ticket["status"],
+        "priority": ticket["priority"],
+        "assigned_to": ticket["assigned_to"],
+        "sla_breached": is_breached(ticket),
+    }
+
+print(get_ticket_status(1044))
+print(get_ticket_status(9999))
+
 '''
 get_service_details(service_name: str) -> dict is also tool-style.
 Matching: match the name case-insensitively and ignore extra spaces, so " network " finds Network.
@@ -58,6 +101,36 @@ On success: return the service’s details plus "open_ticket_ids", a list of the
 On failure: return an error whose message lists the known services.
 Test it with " network " and "Email".
 '''
+
+def get_service_details(service_name: str) -> dict:
+    """Get details about an IT service and its currently open tickets.
+
+    Args:
+        service_name: Name of the service, for example "Network". Not case-sensitive.
+
+    Returns:
+        On success, a dict with "status": "success" plus the service name,
+        owner_team, support_hours, description and open_ticket_ids. If the
+        service isn't known, a dict with "status": "error" and an
+        error_message listing the valid service names.
+    """
+    for name, details in SERVICES.items():
+        if name.lower() == service_name.strip().lower():
+            open_ids = [t["id"] for t in tickets if t["service"] == name and t["status"] == "open"]
+            return {
+                "status": "success",
+                "service": name,
+                "owner_team": details["owner_team"],
+                "support_hours": details["support_hours"],
+                "description": details["description"],
+                "open_ticket_ids": open_ids,
+            }
+
+    known = ", ".join(SERVICES)
+    return {"status": "error", "error_message": f"No service called '{service_name}'. Known services: {known}."}
+
+print(get_service_details(" network "))
+print(get_service_details("Email"))
 
 '''
 Experiment. Run help(get_ticket_status). Then call get_sla_hours("2"), passing a string instead of an int. What happens, and why does it matter for an agent?
