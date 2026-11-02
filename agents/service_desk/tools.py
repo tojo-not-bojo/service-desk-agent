@@ -63,7 +63,7 @@ def get_service_details(service_name: str) -> dict:
     """
     for name, details in SERVICES.items():
         if name.lower() == service_name.strip().lower():
-            open_ids = [t["id"] for t in tickets if t["service"] == name and t["status"] == "open"]
+            open_ids = [t["id"] for t in TICKETS if t["service"] == name and t["status"] == "open"]
             return {
                 "status": "success",
                 "service": name,
