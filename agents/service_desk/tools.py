@@ -1,10 +1,34 @@
 """Tools the service desk agent can call."""
 from .data_loader import load_json
+from google.adk.tools import ToolContext
 
 SLA_HOURS = {1: 4, 2: 8, 3: 24, 4: 72}
 TICKETS = load_json("tickets.json")
 TICKETS_BY_ID = {t["id"]: t for t in TICKETS}
 SERVICES = load_json("services.json")
+
+
+def save_user_details(name: str, team: str, tool_context: ToolContext) -> dict:
+    """Save the user's name and team so they're remembered in future conversations.
+
+    Only call this when the user has told you their name and team.
+
+    Args:
+        name: The user's first name.
+        team: The team or department the user works in, for example "Finance".
+
+    Returns:
+        On success, a dict with "status": "success" and the saved name and team.
+        If either value is blank, a dict with "status": "error" and an error_message.
+    """
+    name = name.strip()
+    team = team.strip()
+    if not name or not team:
+        return {"status": "error", "error_message": "Both a name and a team are needed."}
+
+    tool_context.state["user:name"] = name
+    tool_context.state["user:team"] = team
+    return {"status": "success", "name": name, "team": team}
 
 
 def get_sla_hours(priority: int) -> int:

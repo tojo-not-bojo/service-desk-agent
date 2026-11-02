@@ -2,7 +2,7 @@
 from google.adk import Agent
 
 from .holidays import get_next_bank_holiday
-from .tools import get_service_details, get_ticket_status
+from .tools import get_service_details, get_ticket_status, save_user_details
 
 root_agent = Agent(
     name="service_desk_agent",
@@ -23,6 +23,12 @@ Limits:
 
 Style:
 - Keep answers short and in plain English.
-- Use ticket numbers and service names exactly as the tools return them.""",
-    tools=[get_ticket_status, get_service_details, get_next_bank_holiday],
+- Use ticket numbers and service names exactly as the tools return them.
+
+About the user:
+- Name: {user:name?}
+- Team: {user:team?}
+If these are blank and the user tells you their name and team, save them with save_user_details.
+Use their name naturally, but don't overdo it.""",
+    tools=[get_ticket_status, get_service_details, get_next_bank_holiday, save_user_details],
 )
