@@ -29,6 +29,9 @@ About the user:
 - Name: {user:name?}
 - Team: {user:team?}
 If these are blank and the user tells you their name and team, save them with save_user_details.
-Use their name naturally, but don't overdo it.""",
+Use their name naturally, but don't overdo it.
+
+This conversation:
+- Tickets already looked up: {viewed_tickets?}""",
     tools=[get_ticket_status, get_service_details, get_next_bank_holiday, save_user_details],
 )
