@@ -40,8 +40,7 @@ def is_breached(ticket: dict) -> bool:
     """Return True if the ticket is open and has been open longer than its SLA."""
     return ticket["status"] == "open" and ticket["hours_open"] > get_sla_hours(ticket["priority"])
 
-
-def get_ticket_status(ticket_id: int) -> dict:
+def get_ticket_status(ticket_id: int, tool_context: ToolContext | None = None) -> dict:
     """Look up a service desk ticket and report its current status.
 
     Args:
@@ -52,6 +51,9 @@ def get_ticket_status(ticket_id: int) -> dict:
         ticket_status, priority, assigned_to and sla_breached. On failure,
         a dict with "status": "error" and an error_message.
     """
+    print(f"DEBUG tool_context = {type(tool_context)}")
+    tool_context.state["viewed_tickets"] = viewed
+    print(f"DEBUG viewed_tickets = {tool_context.state.get('viewed_tickets')}")
     try:
         ticket_id = int(str(ticket_id).strip())
     except ValueError:
@@ -64,6 +66,12 @@ def get_ticket_status(ticket_id: int) -> dict:
     if ticket is None:
         return {"status": "error", "error_message": f"Ticket {ticket_id} not found."}
 
+    if tool_context is not None:
+        viewed = list(tool_context.state.get("viewed_tickets", []))
+        if ticket_id not in viewed:
+            viewed.append(ticket_id)
+        tool_context.state["viewed_tickets"] = viewed
+
     return {
         "status": "success",
         "ticket_id": ticket_id,
@@ -73,6 +81,7 @@ def get_ticket_status(ticket_id: int) -> dict:
         "assigned_to": ticket["assigned_to"],
         "sla_breached": is_breached(ticket),
     }
+
 def get_service_details(service_name: str) -> dict:
     """Get details about an IT service and its currently open tickets.
 
