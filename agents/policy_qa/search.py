@@ -106,16 +106,24 @@ def search_policies(query: str) -> dict:
 
     Returns:
         A dict with "status": "success" and "results": up to 3 policy sections,
-        best match first. Each result has a chunk_id, document, section, text
-        and score (higher means more relevant).
+        best match first. Each result has a chunk_id, document, section, text,
+        score (higher means more relevant), and source.
     """
+    MIN_SCORE = 0.6 # below this, the answer is probably not in the policy documents
     if not query.strip():
         return {
             "status": "error",
             "message": "The query is empty. Pass the user's question or its key words.",
         }
 
-    results = semantic_search(query)
+    #results = semantic_search(query)
+    results = [r for r in semantic_search(query) if r["score"] >= MIN_SCORE]
+    if not results:
+        return {
+            "status": "error",
+            "message": "No policy section matches this question closely enough. The policies may not cover it.",
+        }
+
     return {
         "status": "success",
         "query": query,
@@ -126,6 +134,7 @@ def search_policies(query: str) -> dict:
                 "section": r["section"],
                 "text": r["text"],
                 "score": r["score"],
+                "source": r["source"],
             }
             for r in results
         ],
