@@ -51,9 +51,7 @@ def get_ticket_status(ticket_id: int, tool_context: ToolContext | None = None) -
         ticket_status, priority, assigned_to and sla_breached. On failure,
         a dict with "status": "error" and an error_message.
     """
-    print(f"DEBUG tool_context = {type(tool_context)}")
-    tool_context.state["viewed_tickets"] = viewed
-    print(f"DEBUG viewed_tickets = {tool_context.state.get('viewed_tickets')}")
+
     try:
         ticket_id = int(str(ticket_id).strip())
     except ValueError:
@@ -82,6 +80,7 @@ def get_ticket_status(ticket_id: int, tool_context: ToolContext | None = None) -
         "sla_breached": is_breached(ticket),
     }
 
+
 def get_service_details(service_name: str) -> dict:
     """Get details about an IT service and its currently open tickets.
 
@@ -108,7 +107,6 @@ def get_service_details(service_name: str) -> dict:
 
     known = ", ".join(SERVICES)
     return {"status": "error", "error_message": f"No service called '{service_name}'. Known services: {known}."}
-# and `SERVICES` now coming from load_json
 
 
 if __name__ == "__main__":

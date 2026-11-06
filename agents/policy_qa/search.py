@@ -109,7 +109,7 @@ def search_policies(query: str) -> dict:
         best match first. Each result has a chunk_id, document, section, text,
         score (higher means more relevant), and source.
     """
-    MIN_SCORE = 0.6 # below this, the answer is probably not in the policy documents
+    MIN_SCORE = 0.6 #  answerable ≥ 0.673, unanswerable up to 0.663; this only filters clearly off-topic questions
     if not query.strip():
         return {
             "status": "error",
