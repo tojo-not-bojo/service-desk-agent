@@ -1,0 +1,4 @@
+{
+  "user": {"name": "Alex", "role": "staff"},
+  "test_user": {"name": "Jo", "role": "service_desk"}
+}

@@ -6,7 +6,8 @@
     "status": "open",
     "hours_open": 5.0,
     "assigned_to": "Priya",
-    "service": "Hardware"
+    "service": "Hardware",
+    "raised_by": "user"
   },
   {
     "id": 1042,
@@ -15,7 +16,8 @@
     "status": "open",
     "hours_open": 5.5,
     "assigned_to": null,
-    "service": "Network"
+    "service": "Network",
+    "raised_by":"u102"
   },
   {
     "id": 1043,
@@ -24,7 +26,8 @@
     "status": "resolved",
     "hours_open": 1.0,
     "assigned_to": "Sam",
-    "service": "Accounts"
+    "service": "Accounts",
+    "raised_by": "u103"
   },
   {
     "id": 1044,
@@ -33,7 +36,8 @@
     "status": "open",
     "hours_open": 12.0,
     "assigned_to": "Priya",
-    "service": "Network"
+    "service": "Network",
+    "raised_by": "test_user"
   },
   {
     "id": 1045,
@@ -42,7 +46,8 @@
     "status": "open",
     "hours_open": 30.0,
     "assigned_to": null,
-    "service": "Accounts"
+    "service": "Accounts",
+    "raised_by": "u104"
   },
   {
     "id": 1046,
@@ -51,6 +56,7 @@
     "status": "open",
     "hours_open": 26.0,
     "assigned_to": "Sam",
-    "service": "Hardware"
+    "service": "Hardware",
+    "raised_by": "u105"
   }
 ]
