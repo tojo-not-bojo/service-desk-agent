@@ -7,6 +7,7 @@ TICKETS = load_json("tickets.json")
 TICKETS_BY_ID = {t["id"]: t for t in TICKETS}
 SERVICES = load_json("services.json")
 MAX_DETAIL_LENGTH = 40
+MAX_DETAIL_WORDS = 3    # stops sentences being saved as a name (attack A10); short phrases still get through
 USERS = load_json("users.json")
 
 
@@ -19,8 +20,12 @@ def can_view_ticket(user_id: str, ticket: dict) -> bool:
 
 
 def is_valid_detail(value: str) -> bool:
-    """Return True if value is 1-40 characters of letters, spaces, hyphens and apostrophes."""
-    return 0 < len(value) <= MAX_DETAIL_LENGTH and all(c.isalpha() or c in " '-" for c in value)
+    """Return True if value is 1-3 words, 1-40 characters, of letters, spaces, hyphens and apostrophes."""
+    return (
+        0 < len(value) <= MAX_DETAIL_LENGTH
+        and len(value.split()) <= MAX_DETAIL_WORDS
+        and all(c.isalpha() or c in " '-" for c in value)
+    )
 
 
 def save_user_details(name: str, team: str, tool_context: ToolContext) -> dict:
@@ -43,7 +48,7 @@ def save_user_details(name: str, team: str, tool_context: ToolContext) -> dict:
     if not is_valid_detail(name) or not is_valid_detail(team):
         return {
             "status": "error",
-            "error_message": "Name and team must be 1-40 characters: letters, spaces, hyphens and apostrophes only.",
+            "error_message": "Name and team must be 1-3 words and 1-40 characters: letters, spaces, hyphens and apostrophes only.",
         }
     tool_context.state["user:name"] = name
     tool_context.state["user:team"] = team
