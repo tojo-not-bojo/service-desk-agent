@@ -14,6 +14,7 @@ load_dotenv(Path(__file__).parent / ".env")      # so the API key is available w
 
 EMBED_MODEL = "gemini-embedding-001" #"gemini-embedding-2"             # replace with a name from list_models.py
 INDEX_PATH = POLICY_DIR.parent / "policy_embeddings.json"
+MIN_SCORE = 0.6     # answerable >= 0.673, unanswerable up to 0.663; this only filters clearly off-topic questions
 STOPWORDS = {
     "a", "an", "the", "i", "me", "my", "is", "are", "am", "do", "does", "can", "could",
     "to", "of", "in", "on", "for", "and", "or", "how", "what", "when", "where", "much",
@@ -107,21 +108,21 @@ def search_policies(query: str) -> dict:
     Returns:
         A dict with "status": "success" and "results": up to 3 policy sections,
         best match first. Each result has a chunk_id, document, section, text,
-        score (higher means more relevant), and source.
+        score (higher means more relevant), and source. If the query is empty
+        or no section is relevant enough, a dict with "status": "error" and an
+        error_message.
     """
-    MIN_SCORE = 0.6 #  answerable ≥ 0.673, unanswerable up to 0.663; this only filters clearly off-topic questions
     if not query.strip():
         return {
             "status": "error",
-            "message": "The query is empty. Pass the user's question or its key words.",
+            "error_message": "The query is empty. Pass the user's question or its key words.",
         }
 
-    #results = semantic_search(query)
     results = [r for r in semantic_search(query) if r["score"] >= MIN_SCORE]
     if not results:
         return {
             "status": "error",
-            "message": "No policy section matches this question closely enough. The policies may not cover it.",
+            "error_message": "No policy section matches this question closely enough. The policies may not cover it.",
         }
 
     return {
