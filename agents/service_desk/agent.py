@@ -3,6 +3,7 @@ from google.adk import Agent
 
 from .holidays import get_next_bank_holiday
 from .tools import get_service_details, get_ticket_status, save_user_details
+from .controls import guard_tool_call, log_tool_call
 
 root_agent = Agent(
     name="service_desk_agent",
@@ -34,4 +35,6 @@ Use their name naturally, but don't overdo it.
 This conversation:
 - Tickets already looked up: {viewed_tickets?}""",
     tools=[get_ticket_status, get_service_details, get_next_bank_holiday, save_user_details],
+    before_tool_callback=guard_tool_call,
+    after_tool_callback=log_tool_call,
 )
