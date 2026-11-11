@@ -40,13 +40,11 @@ def save_user_details(name: str, team: str, tool_context: ToolContext) -> dict:
     team = team.strip()
     if not name or not team:
         return {"status": "error", "error_message": "Both a name and a team are needed."}
-    
     if not is_valid_detail(name) or not is_valid_detail(team):
         return {
             "status": "error",
             "error_message": "Name and team must be 1-40 characters: letters, spaces, hyphens and apostrophes only.",
         }
-    
     tool_context.state["user:name"] = name
     tool_context.state["user:team"] = team
     return {"status": "success", "name": name, "team": team}
@@ -62,7 +60,7 @@ def is_breached(ticket: dict) -> bool:
     return ticket["status"] == "open" and ticket["hours_open"] > get_sla_hours(ticket["priority"])
 
 
-def get_ticket_status(ticket_id: int, tool_context: ToolContext | None = None) -> dict:
+def get_ticket_status(ticket_id: int, tool_context: ToolContext) -> dict:
     """Look up a service desk ticket and report its current status.
 
     Args:
@@ -73,7 +71,6 @@ def get_ticket_status(ticket_id: int, tool_context: ToolContext | None = None) -
         ticket_status, priority, assigned_to and sla_breached. On failure,
         a dict with "status": "error" and an error_message.
     """
-
     try:
         ticket_id = int(str(ticket_id).strip())
     except ValueError:
@@ -86,7 +83,7 @@ def get_ticket_status(ticket_id: int, tool_context: ToolContext | None = None) -
     if ticket is None:
         return {"status": "error", "error_message": f"Ticket {ticket_id} not found."}
 
-    if tool_context is None or not can_view_ticket(tool_context.user_id, ticket):
+    if not can_view_ticket(tool_context.user_id, ticket):
         return {
             "status": "error",
             "error_message": f"You can't view ticket {ticket_id}. You can only view tickets you raised.",
@@ -108,7 +105,7 @@ def get_ticket_status(ticket_id: int, tool_context: ToolContext | None = None) -
     }
 
 
-def get_service_details(service_name: str) -> dict:
+def get_service_details(service_name: str, tool_context: ToolContext) -> dict:
     """Get details about an IT service and its currently open tickets.
 
     Args:
@@ -116,13 +113,18 @@ def get_service_details(service_name: str) -> dict:
 
     Returns:
         On success, a dict with "status": "success" plus the service name,
-        owner_team, support_hours, description and open_ticket_ids. If the
-        service isn't known, a dict with "status": "error" and an
-        error_message listing the valid service names.
+        owner_team, support_hours, description and open_ticket_ids (the open
+        tickets this user is allowed to see). If the service isn't known, a
+        dict with "status": "error" and an error_message listing the valid
+        service names.
     """
     for name, details in SERVICES.items():
         if name.lower() == service_name.strip().lower():
-            open_ids = [t["id"] for t in TICKETS if t["service"] == name and t["status"] == "open"]
+            open_ids = [
+                t["id"] for t in TICKETS
+                if t["service"] == name and t["status"] == "open"
+                and can_view_ticket(tool_context.user_id, t)
+            ]
             return {
                 "status": "success",
                 "service": name,
@@ -135,9 +137,3 @@ def get_service_details(service_name: str) -> dict:
     known = ", ".join(SERVICES)
     return {"status": "error", "error_message": f"No service called '{service_name}'. Known services: {known}."}
 
-
-if __name__ == "__main__":
-    print(get_ticket_status(1044))
-    print(get_ticket_status("abc"))
-    print(get_service_details(" network "))
-    print(get_service_details("Email"))
